@@ -1,35 +1,24 @@
+import Box from "terriajs/lib/Styled/Box";
 import PropTypes from "prop-types";
-import RelatedMaps from "terriajs/lib/ReactViews/RelatedMaps/RelatedMaps";
-import { MenuLeft } from "terriajs/lib/ReactViews/StandardUserInterface/customizable/Groups";
-import MenuItem from "terriajs/lib/ReactViews/StandardUserInterface/customizable/MenuItem";
-import StandardUserInterface from "terriajs/lib/ReactViews/StandardUserInterface/StandardUserInterface";
-import version from "../../version";
+import combine from "terriajs-cesium/Source/Core/combine";
+import { ContextProviders } from "terriajs/lib/ReactViews/Context";
+import { TerriaViewerWrapper } from "terriajs/lib/ReactViews/Map/TerriaViewerWrapper";
+import { terriaTheme } from "terriajs/lib/ReactViews/StandardUserInterface";
 
 export const TerriaUserInterface = ({ terria, viewState, themeOverrides }) => {
-  const relatedMaps = viewState.terria.configParameters.relatedMaps;
-  const aboutButtonHrefUrl =
-    viewState.terria.configParameters.aboutButtonHrefUrl;
+  // Merge theme in order of highest priority: themeOverrides props -> theme config parameter -> default terriaTheme
+  const mergedTheme = combine(
+    themeOverrides,
+    combine(terria.configParameters.theme, terriaTheme, true),
+    true
+  );
 
   return (
-    <StandardUserInterface
-      terria={terria}
-      viewState={viewState}
-      themeOverrides={themeOverrides}
-      version={version}
-    >
-      <MenuLeft>
-        {aboutButtonHrefUrl ? (
-          <MenuItem
-            caption="About"
-            href={aboutButtonHrefUrl}
-            key="about-link"
-          />
-        ) : null}
-        {relatedMaps && relatedMaps.length > 0 ? (
-          <RelatedMaps relatedMaps={relatedMaps} />
-        ) : null}
-      </MenuLeft>
-    </StandardUserInterface>
+    <ContextProviders viewState={viewState} theme={mergedTheme}>
+      <Box position="absolute" css={{ top: 0, zIndex: 0 }} fullWidth fullHeight>
+        <TerriaViewerWrapper />
+      </Box>
+    </ContextProviders>
   );
 };
 

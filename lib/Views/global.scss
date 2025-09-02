@@ -14,6 +14,12 @@ body {
     }
   }
 
+  div.cesium-widget,
+  div.cesium-widget canvas {
+    width: 100%;
+    height: 100%;
+  }
+
   // To customise the look of your Terria Map, uncomment this section and make changes to your heart's content
   // You will also want to uncomment and change values in lib/Styles/variables.scss
   /*
